@@ -1,7 +1,6 @@
 // src/pages/MenuPage.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import axiosClient from '../api/axiosClient';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -9,6 +8,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Ornament from '../components/Ornament';
 import { LayoutGrid, List } from 'lucide-react';
+import { menuData } from '../data/menuData'; // 🔑 Data menu statis
 
 // Daftar tag yang bisa difilter oleh pelanggan
 const availableTags = ['Best Seller', 'Popular', 'Recommended', 'Must Try', 'New Menu'];
@@ -34,7 +34,7 @@ const MenuItemCard = ({ item, viewMode = 'grid' }) => {
 
     const getImageUrl = (imagePath) => {
         if (!imagePath || imageError) return null;
-        return `http://localhost:8000/storage/${imagePath}`;
+        return imagePath; // 🔑 langsung pakai path dari menuData
     };
 
     const imageUrl = getImageUrl(item.image_path);
@@ -115,31 +115,17 @@ const MenuPage = () => {
     const { t } = useTranslation();
     const [menus, setMenus] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [activeCategory, setActiveCategory] = useState("All");
     const [activeTag, setActiveTag] = useState("All");
     const [viewMode, setViewMode] = useState('grid');
 
     useEffect(() => {
-        const fetchMenus = async () => {
-            try {
-                setLoading(true);
-                const response = await axiosClient.get('/menus');
-                setMenus(response.data.data);
-                setError(null);
-            } catch (err) {
-                setError('Gagal memuat data menu.');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchMenus();
-    }, []);
-
-    useEffect(() => {
         AOS.init({ duration: 600, once: true });
         window.scrollTo(0, 0);
+
+        // 🔑 langsung pakai menuData statis
+        setMenus(menuData);
+        setLoading(false);
     }, []);
 
     const menuCategories = ["All", ...new Set(menus.map(item => item.category))];
@@ -152,7 +138,6 @@ const MenuPage = () => {
     }, [menus, activeCategory, activeTag]);
 
     if (loading) return <div className="text-center py-20">{t('Loading...')}</div>;
-    if (error) return <div className="text-center py-20 text-red-500">{error}</div>;
 
     return (
         <div>
