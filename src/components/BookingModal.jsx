@@ -7,6 +7,8 @@ const BookingModal = ({ isOpen, onClose }) => {
     const { t } = useTranslation();
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submittedReservation, setSubmittedReservation] = useState(null);
+    const [bookingType, setBookingType] = useState('meja');
+    const [area, setArea] = useState('indoor');
     const [formData, setFormData] = useState({
         name: '', whatsapp: '', date: '', time: '', people: 1, eventDetails: ''
     });
@@ -37,6 +39,8 @@ const BookingModal = ({ isOpen, onClose }) => {
         setIsSubmitted(false);
         setSubmittedReservation(null);
         setFormData({ name: '', whatsapp: '', date: '', time: '', people: 1, eventDetails: '' });
+        setBookingType('meja');
+        setArea('indoor');
         onClose();
     };
 
@@ -60,6 +64,56 @@ const BookingModal = ({ isOpen, onClose }) => {
                         <>
                             <h2 className="font-serif font-bold text-3xl text-charcoal mb-6">{t('Buat Reservasi')}</h2>
                             <form onSubmit={handleSubmit} className="space-y-4">
+                                {/* Tipe Reservasi */}
+                                <div>
+                                    <label className="font-semibold text-charcoal/80">{t('Tipe Reservasi')}</label>
+                                    <div className="grid grid-cols-2 gap-3 mt-2">
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setBookingType('meja')} 
+                                            className={`p-3 rounded-lg font-semibold transition-colors ${bookingType === 'meja' ? 'bg-wood-brown text-white' : 'bg-cream text-charcoal hover:bg-wood-brown/20'}`}
+                                        >
+                                            {t('Booking Meja')}
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setBookingType('event')} 
+                                            className={`p-3 rounded-lg font-semibold transition-colors ${bookingType === 'event' ? 'bg-wood-brown text-white' : 'bg-cream text-charcoal hover:bg-wood-brown/20'}`}
+                                        >
+                                            {t('Booking Event')}
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                {/* Area Selection - hanya tampil untuk booking meja */}
+                                {bookingType === 'meja' && (
+                                    <div>
+                                        <label className="font-semibold text-charcoal/80">{t('Pilih Area')}</label>
+                                        <div className="grid grid-cols-3 gap-3 mt-2">
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setArea('indoor')} 
+                                                className={`p-2 rounded-lg text-sm font-medium transition-colors ${area === 'indoor' ? 'bg-light-brown text-white' : 'bg-cream text-charcoal hover:bg-light-brown/20'}`}
+                                            >
+                                                {t('Indoor')}
+                                            </button>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setArea('outdoor')} 
+                                                className={`p-2 rounded-lg text-sm font-medium transition-colors ${area === 'outdoor' ? 'bg-light-brown text-white' : 'bg-cream text-charcoal hover:bg-light-brown/20'}`}
+                                            >
+                                                {t('Outdoor')}
+                                            </button>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setArea('vip')} 
+                                                className={`p-2 rounded-lg text-sm font-medium transition-colors ${area === 'vip' ? 'bg-light-brown text-white' : 'bg-cream text-charcoal hover:bg-light-brown/20'}`}
+                                            >
+                                                {t('VIP Room')}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                                 <div>
                                     <label htmlFor="name" className="font-semibold text-charcoal/80">{t('Nama Lengkap')}</label>
                                     <input 
@@ -116,19 +170,23 @@ const BookingModal = ({ isOpen, onClose }) => {
                                         className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown"
                                     >
                                         {[...Array(20)].map((_, i) => (
-                                            <option key={i + 1} value={i + 1}>{i + 1} {i === 0 ? 'orang' : 'orang'}</option>
+                                            <option key={i + 1} value={i + 1}>{i + 1} orang</option>
                                         ))}
                                     </select>
                                 </div>
+                                {/* Detail Acara - wajib untuk event, opsional untuk meja */}
                                 <div>
-                                    <label htmlFor="eventDetails" className="font-semibold text-charcoal/80">{t('Detail Acara (Opsional)')}</label>
+                                    <label htmlFor="eventDetails" className="font-semibold text-charcoal/80">
+                                        {bookingType === 'event' ? t('Detail Acara') : t('Detail Acara (Opsional)')}
+                                    </label>
                                     <textarea 
                                         id="eventDetails" 
                                         value={formData.eventDetails} 
                                         onChange={handleInputChange} 
-                                        placeholder="Ceritakan acara atau kebutuhan khusus Anda..." 
+                                        placeholder={bookingType === 'event' ? "Contoh: Acara ulang tahun, butuh area outdoor dan indoor, dll." : "Ceritakan acara atau kebutuhan khusus Anda..."} 
                                         rows="3" 
-                                        className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown resize-none" 
+                                        className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown resize-none"
+                                        required={bookingType === 'event'}
                                     />
                                 </div>
                                 
