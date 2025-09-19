@@ -1,11 +1,11 @@
 // src/components/AboutSection.jsx
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWebsiteContent } from '../context/WebsiteContext';
+import { useWebsite } from '../context/WebsiteContext'; // Changed from useWebsiteContent to useWebsite
 
 const AboutSection = () => {
     const { t } = useTranslation();
-    const { settings, loading } = useWebsiteContent();
+    const { settings, loading } = useWebsite(); // Changed from useWebsiteContent to useWebsite
 
     // Safe API URL function
     const getApiUrl = useMemo(() => {
