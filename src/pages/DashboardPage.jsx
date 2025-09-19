@@ -1,9 +1,8 @@
 // src/pages/DashboardPage.jsx
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BarChart, Clock } from 'lucide-react';
-import axiosClient from '../api/axiosClient';
-import toast from 'react-hot-toast';
+import { dummyDashboardStats } from '../data/adminData'; // <-- Import data dummy
 
 // Komponen Kalender Widget Fungsional
 const CalendarWidget = ({ reservations }) => {
@@ -14,20 +13,16 @@ const CalendarWidget = ({ reservations }) => {
     const month = today.toLocaleString('id-ID', { month: 'long' });
     const year = today.getFullYear();
 
-    // Memproses reservasi untuk lookup yang cepat
-    const reservationsByDate = useMemo(() => {
-        const map = new Map();
-        reservations.forEach(res => {
-            const date = new Date(res.date).getDate();
-            if (!map.has(date)) {
-                map.set(date, []);
-            }
-            map.get(date).push(res);
-        });
-        return map;
-    }, [reservations]);
+    // Mapping reservasi berdasarkan tanggal
+    const reservationsByDate = new Map();
+    reservations.forEach(res => {
+        const date = new Date(res.date).getDate();
+        if (!reservationsByDate.has(date)) {
+            reservationsByDate.set(date, []);
+        }
+        reservationsByDate.get(date).push(res);
+    });
 
-    // Logika untuk membuat grid kalender dinamis
     const firstDayOfMonth = new Date(year, today.getMonth(), 1).getDay();
     const daysInMonth = new Date(year, today.getMonth() + 1, 0).getDate();
 
@@ -40,9 +35,7 @@ const CalendarWidget = ({ reservations }) => {
         }
     };
 
-    const handleMouseLeave = () => {
-        setHoveredInfo(null);
-    };
+    const handleMouseLeave = () => setHoveredInfo(null);
 
     return (
         <div className="relative flex gap-4">
@@ -53,7 +46,7 @@ const CalendarWidget = ({ reservations }) => {
                     {['M', 'S', 'S', 'R', 'K', 'J', 'S'].map((day, i) => (
                         <div key={i} className="font-bold text-xs text-charcoal/60">{day}</div>
                     ))}
-                    
+
                     {/* Sel kosong sebelum tanggal 1 */}
                     {Array.from({ length: firstDayOfMonth }).map((_, i) => (
                         <div key={`empty-${i}`}></div>
@@ -61,8 +54,8 @@ const CalendarWidget = ({ reservations }) => {
 
                     {/* Tanggal dalam sebulan */}
                     {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(date => (
-                        <div 
-                            key={date} 
+                        <div
+                            key={date}
                             className="relative p-2 cursor-pointer rounded-full transition-colors hover:bg-wood-brown/10"
                             onMouseEnter={() => handleMouseEnter(date)}
                             onMouseLeave={handleMouseLeave}
@@ -75,7 +68,8 @@ const CalendarWidget = ({ reservations }) => {
                     ))}
                 </div>
             </div>
-            {/* Tooltip Informasi Reservasi */}
+
+            {/* Tooltip Reservasi */}
             {hoveredInfo && (
                 <div className="absolute left-full ml-4 w-64 bg-white p-4 rounded-lg shadow-xl border z-10 animate-fade-in">
                     <h4 className="font-bold border-b pb-2 mb-2">
@@ -97,27 +91,8 @@ const CalendarWidget = ({ reservations }) => {
 
 const DashboardPage = () => {
     const { t } = useTranslation();
-    const [stats, setStats] = useState({
-        reservationsToday: 0,
-        bestSellerMenu: 'Memuat...',
-        averageRating: 0,
-        reservations: []
-    });
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const response = await axiosClient.get('/dashboard/stats');
-                setStats(response.data);
-            } catch (error) {
-                toast.error(t('Gagal memuat statistik dasbor.'));
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchStats();
-    }, [t]);
+    const [stats] = useState(dummyDashboardStats); // <-- langsung pakai dummy
+    const [loading] = useState(false); // <-- nggak ada loading lagi
 
     return (
         <div className="bg-soft-white p-8 rounded-xl shadow-lg space-y-12">
@@ -136,27 +111,21 @@ const DashboardPage = () => {
                 </h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div className="bg-cream p-6 rounded-lg border border-wood-brown/20">
-                        <h3 className="font-bold text-charcoal">
-                            {t('Reservasi Hari Ini')}
-                        </h3>
+                        <h3 className="font-bold text-charcoal">{t('Reservasi Hari Ini')}</h3>
                         <p className="font-serif font-black text-4xl text-wood-brown mt-2">
                             {loading ? '...' : stats.reservationsToday}
                         </p>
                     </div>
                     
                     <div className="bg-cream p-6 rounded-lg border border-wood-brown/20">
-                        <h3 className="font-bold text-charcoal">
-                            {t('Menu Terlaris')}
-                        </h3>
+                        <h3 className="font-bold text-charcoal">{t('Menu Terlaris')}</h3>
                         <p className="font-serif font-black text-2xl text-wood-brown mt-2">
                             {loading ? '...' : stats.bestSellerMenu}
                         </p>
                     </div>
                     
                     <div className="bg-cream p-6 rounded-lg border border-wood-brown/20">
-                        <h3 className="font-bold text-charcoal">
-                            {t('Rating Rata-Rata')}
-                        </h3>
+                        <h3 className="font-bold text-charcoal">{t('Rating Rata-Rata')}</h3>
                         <p className="font-serif font-black text-4xl text-wood-brown mt-2">
                             {loading ? '...' : stats.averageRating} 
                             <span className="text-2xl text-yellow-500">★</span>
@@ -167,16 +136,12 @@ const DashboardPage = () => {
             
             <section className="grid md:grid-cols-2 gap-8">
                 <div>
-                    <h2 className="font-bold text-xl text-charcoal mb-4">
-                        {t('Kalender Reservasi')}
-                    </h2>
+                    <h2 className="font-bold text-xl text-charcoal mb-4">{t('Kalender Reservasi')}</h2>
                     <CalendarWidget reservations={stats.reservations} />
                 </div>
                 
                 <div>
-                    <h2 className="font-bold text-xl text-charcoal mb-4">
-                        {t('Grafik Reservasi (Mingguan)')}
-                    </h2>
+                    <h2 className="font-bold text-xl text-charcoal mb-4">{t('Grafik Reservasi (Mingguan)')}</h2>
                     <div className="bg-cream p-6 rounded-lg border border-wood-brown/20 h-64 flex flex-col justify-center items-center">
                         <BarChart size={100} className="text-charcoal/20"/>
                         <p className="text-center text-charcoal/60 italic mt-4">
