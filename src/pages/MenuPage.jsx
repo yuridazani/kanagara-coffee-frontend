@@ -10,7 +10,7 @@ import Ornament from '../components/Ornament';
 import { LayoutGrid, List } from 'lucide-react';
 import { menuData } from '../data/menuData';
 
-const availableTags = ['Best Seller', 'Popular', 'Recommended', 'Must Try', 'New Menu'];
+const availableTags = ['Best Seller', 'Regular', 'Popular', 'Recommended', 'Must Try', 'New Menu'];
 
 // Komponen Kartu Menu
 const MenuItemCard = ({ item, viewMode = 'grid' }) => {
@@ -23,6 +23,7 @@ const MenuItemCard = ({ item, viewMode = 'grid' }) => {
     const getTagClass = (tag) => {
         switch (tag) {
             case 'Best Seller': return 'bg-yellow-500 text-white';
+            case 'Regular': return 'bg-gray-500 text-white';
             case 'Popular': return 'bg-blue-500 text-white';
             case 'Recommended': return 'bg-green-500 text-white';
             case 'Must Try': return 'bg-purple-500 text-white';
@@ -31,12 +32,22 @@ const MenuItemCard = ({ item, viewMode = 'grid' }) => {
         }
     };
 
-    const getImageUrl = (imagePath) => {
-        if (!imagePath || imageError) return null;
-        return imagePath; 
+    const getImageUrl = (item) => {
+        if (imageError) return null;
+        
+        // Prioritas: image_path > imageUrl > default
+        if (item.image_path && item.image_path !== 'URL_GAMBAR_ICE_LATTE' && !item.image_path.startsWith('URL_GAMBAR_')) {
+            return item.image_path;
+        }
+        
+        if (item.imageUrl && item.imageUrl !== 'URL_GAMBAR_ICE_LATTE' && !item.imageUrl.startsWith('URL_GAMBAR_')) {
+            return item.imageUrl;
+        }
+        
+        return null;
     };
 
-    const imageUrl = getImageUrl(item.image_path);
+    const imageUrl = getImageUrl(item);
 
     // List View
     if (viewMode === 'list') {
@@ -55,7 +66,7 @@ const MenuItemCard = ({ item, viewMode = 'grid' }) => {
                             <span className="text-wood-brown/60 text-xs">{t('No Image')}</span>
                         </div>
                     )}
-                    {item.tag !== 'None' && (
+                    {item.tag && item.tag !== 'None' && (
                         <span className={`absolute top-1 right-1 text-xs font-bold px-2 py-0.5 rounded-full ${getTagClass(item.tag)}`}>
                             {item.tag}
                         </span>
@@ -93,7 +104,7 @@ const MenuItemCard = ({ item, viewMode = 'grid' }) => {
                         <span className="text-wood-brown/60 text-sm">{t('No Image')}</span>
                     </div>
                 )}
-                {item.tag !== 'None' && (
+                {item.tag && item.tag !== 'None' && (
                     <span className={`absolute top-2 right-2 text-xs font-bold px-2 py-1 rounded-full ${getTagClass(item.tag)}`}>
                         {item.tag}
                     </span>
@@ -121,20 +132,48 @@ const MenuPage = () => {
     useEffect(() => {
         AOS.init({ duration: 600, once: true });
         window.scrollTo(0, 0);
+        
+        // Debug log untuk memastikan data ter-load
+        console.log('MenuData loaded:', menuData);
+        console.log('Total items:', menuData.length);
+        console.log('Best Sellers:', menuData.filter(item => item.tag === 'Best Seller').length);
+        console.log('Regular items:', menuData.filter(item => item.tag === 'Regular').length);
+        
         setMenus(menuData);
         setLoading(false);
     }, []);
 
-    const menuCategories = ["All", ...new Set(menus.map(item => item.category))];
+    const menuCategories = useMemo(() => {
+        const categories = ["All", ...new Set(menus.map(item => item.category))];
+        console.log('Available categories:', categories);
+        return categories;
+    }, [menus]);
 
     const filteredMenu = useMemo(() => {
         let items = [...menus];
-        if (activeCategory !== "All") items = items.filter(item => item.category === activeCategory);
-        if (activeTag !== "All") items = items.filter(item => item.tag === activeTag);
+        console.log('Starting with items:', items.length);
+        
+        if (activeCategory !== "All") {
+            items = items.filter(item => item.category === activeCategory);
+            console.log(`After category filter (${activeCategory}):`, items.length);
+        }
+        
+        if (activeTag !== "All") {
+            items = items.filter(item => item.tag === activeTag);
+            console.log(`After tag filter (${activeTag}):`, items.length);
+        }
+        
+        console.log('Final filtered items:', items.length);
         return items;
     }, [menus, activeCategory, activeTag]);
 
-    if (loading) return <div className="text-center py-20">{t('Loading...')}</div>;
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-wood-brown"></div>
+            </div>
+        );
+    }
 
     return (
         <div>
@@ -161,7 +200,10 @@ const MenuPage = () => {
                                         {menuCategories.map(category => (
                                             <button
                                                 key={category}
-                                                onClick={() => setActiveCategory(category)}
+                                                onClick={() => {
+                                                    console.log('Category clicked:', category);
+                                                    setActiveCategory(category);
+                                                }}
                                                 className={`px-3 py-1.5 text-sm font-semibold rounded-full transition-all ${
                                                     activeCategory === category
                                                         ? 'bg-wood-brown text-white shadow-md'
@@ -177,7 +219,11 @@ const MenuPage = () => {
                                 {/* Tag Filter & View Mode */}
                                 <div className="flex gap-3 items-center">
                                     <select
-                                        onChange={(e) => setActiveTag(e.target.value)}
+                                        value={activeTag}
+                                        onChange={(e) => {
+                                            console.log('Tag changed:', e.target.value);
+                                            setActiveTag(e.target.value);
+                                        }}
                                         className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-wood-brown/20"
                                     >
                                         <option value="All">{t('Semua Label')}</option>
@@ -201,13 +247,18 @@ const MenuPage = () => {
                             </div>
                         </div>
 
-                        {/* Results Counter */}
+                        {/* Results Counter & Debug Info */}
                         <div className="mb-6">
                             <p className="text-sm text-gray-600">
-                                {t('Menampilkan')} {filteredMenu.length} {t('menu')}
+                                {t('Menampilkan')} <strong>{filteredMenu.length}</strong> {t('menu')}
                                 {activeCategory !== "All" && ` dalam kategori "${activeCategory}"`}
                                 {activeTag !== "All" && ` dengan label "${activeTag}"`}
                             </p>
+                            <div className="text-xs text-gray-500 mt-1">
+                                Total data: {menus.length} | 
+                                Best Sellers: {menus.filter(item => item.tag === 'Best Seller').length} | 
+                                Regular: {menus.filter(item => item.tag === 'Regular').length}
+                            </div>
                         </div>
 
                         {/* Menu Grid/List */}
@@ -222,6 +273,11 @@ const MenuPage = () => {
                                 <div className="col-span-full text-center py-12 text-gray-500">
                                     <p className="text-lg">{t('Tidak ada menu yang ditemukan')}</p>
                                     <p className="text-sm">{t('Coba ubah filter kategori atau label')}</p>
+                                    <div className="mt-4 text-xs text-gray-400">
+                                        <p>Active Category: {activeCategory}</p>
+                                        <p>Active Tag: {activeTag}</p>
+                                        <p>Total Menu Items: {menus.length}</p>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -235,4 +291,3 @@ const MenuPage = () => {
 };
 
 export default MenuPage;
-
