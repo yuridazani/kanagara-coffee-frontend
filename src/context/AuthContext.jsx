@@ -1,50 +1,50 @@
-// frontend/src/context/AuthContext.jsx
+// src/context/AuthContext.jsx
 
-import React, { createContext, useState, useContext } from 'react';
-import axiosClient from '../api/axiosClient';
+import { createContext, useContext, useState } from 'react';
+// Hapus 'axiosClient'
+// import axiosClient from '../api/axiosClient';
 
-const AuthContext = createContext({
-  user: null,
-  token: null,
-  setUser: () => {},
-  setToken: () => {},
-  login: async () => {},
-  logout: () => {}
-});
+const AuthContext = createContext({ /* ... */ });
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  // Ambil token dari localStorage saat pertama kali load
-  const [token, _setToken] = useState(localStorage.getItem('ACCESS_TOKEN'));
+    const [user, setUser] = useState(null);
+    const [token, _setToken] = useState(localStorage.getItem('ACCESS_TOKEN'));
 
-  const setToken = (newToken) => {
-    _setToken(newToken);
-    if (newToken) {
-      localStorage.setItem('ACCESS_TOKEN', newToken);
-    } else {
-      localStorage.removeItem('ACCESS_TOKEN');
-    }
-  };
+    const setToken = (newToken) => {
+        _setToken(newToken);
+        if (newToken) {
+            localStorage.setItem('ACCESS_TOKEN', newToken);
+        } else {
+            localStorage.removeItem('ACCESS_TOKEN');
+        }
+    };
 
-  const login = async (credentials) => {
-    const response = await axiosClient.post('/login', credentials);
-    setUser(response.data.user);
-    setToken(response.data.access_token);
-    return response;
-  };
+    // --- (PENTING) UBAH FUNGSI LOGIN ---
+    const login = async (credentials) => {
+        // Simulasi proses login yang berhasil setelah 500ms
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const dummyUser = { name: 'Admin Kanagara', email: credentials.email };
+                const dummyToken = 'DUMMY_TOKEN_123';
+                
+                setUser(dummyUser);
+                setToken(dummyToken);
 
-  const logout = () => {
-    // Di sini bisa ditambahkan call API ke /logout jika perlu
-    setUser(null);
-    setToken(null);
-  };
+                resolve({ data: { user: dummyUser, access_token: dummyToken } });
+            }, 500);
+        });
+    };
 
-  return (
-    <AuthContext.Provider value={{ user, token, setUser, setToken, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    const logout = () => {
+        setUser(null);
+        setToken(null);
+    };
+
+    return (
+        <AuthContext.Provider value={{ user, token, setUser, setToken, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
-// Buat custom hook agar lebih mudah digunakan
 export const useAuth = () => useContext(AuthContext);
