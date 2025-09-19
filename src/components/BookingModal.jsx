@@ -1,16 +1,11 @@
-// src/components/BookingModal.jsx
-
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Send, CheckCircle } from 'lucide-react';
-// HAPUS: import axiosClient from '../api/axiosClient';
 import toast from 'react-hot-toast';
 import ReCAPTCHA from "react-google-recaptcha";
 
 const BookingModal = ({ isOpen, onClose }) => {
     const { t } = useTranslation();
-    const [bookingType, setBookingType] = useState('meja');
-    const [area, setArea] = useState('indoor');
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submittedReservation, setSubmittedReservation] = useState(null);
     const [formData, setFormData] = useState({
@@ -42,6 +37,7 @@ const BookingModal = ({ isOpen, onClose }) => {
             setIsSubmitted(true);
             setIsSubmitting(false);
             toast.success(t('Reservasi Anda berhasil terkirim!'));
+            recaptchaRef.current.reset();
         }, 1500);
     };
 
@@ -72,6 +68,7 @@ const BookingModal = ({ isOpen, onClose }) => {
                         <>
                             <h2 className="font-serif font-bold text-3xl text-charcoal mb-6">{t('Buat Reservasi')}</h2>
                             <form onSubmit={handleSubmit} className="space-y-4">
+                                {/* Form fields remain the same */}
                                 <div>
                                     <label htmlFor="name" className="font-semibold text-charcoal/80">{t('Nama Lengkap')}</label>
                                     <input type="text" id="name" value={formData.name} onChange={handleInputChange} required className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown" />
