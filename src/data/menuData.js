@@ -89,4 +89,173 @@ export const menuData = [
   { id: 67, category: "Snacks", name: "DIMSUM MENTAI", price: "22k" },
 ];
 
+
 export const menuCategories = ["All", ...new Set(menuData.map(item => item.category))];
+
+export const menuData = [
+    // BEST SELLERS
+    {
+        id: 1,
+        name: "Kanagara Signature Coffee",
+        category: "Kopi Spesial",
+        price: 35000,
+        image_path: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1287&auto=format&fit=crop",
+        description: "Racikan kopi spesial dengan biji kopi pilihan dan teknik seduh yang sempurna",
+        tag: "Best Seller",
+        is_available: true
+    },
+    {
+        id: 2,
+        name: "Caramel Macchiato",
+        category: "Coffee",
+        price: 32000,
+        image_path: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=1470&auto=format&fit=crop",
+        description: "Espresso dengan steamed milk dan caramel syrup yang manis",
+        tag: "Best Seller",
+        is_available: true
+    },
+    {
+        id: 3,
+        name: "Nasi Gudeg Jogja",
+        category: "Makanan Utama",
+        price: 28000,
+        image_path: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?q=80&w=1481&auto=format&fit=crop",
+        description: "Gudeg khas Jogja dengan ayam, telur, dan sambal krecek",
+        tag: "Best Seller",
+        is_available: true
+    },
+    {
+        id: 4,
+        name: "Matcha Latte",
+        category: "Non Coffee",
+        price: 30000,
+        image_path: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=1471&auto=format&fit=crop",
+        description: "Matcha premium dengan susu yang creamy dan lembut",
+        tag: "Best Seller",
+        is_available: true
+    },
+    {
+        id: 5,
+        name: "Croffle Original",
+        category: "Dessert",
+        price: 25000,
+        image_path: "https://images.unsplash.com/photo-1551024506-0bccd828d307?q=80&w=1528&auto=format&fit=crop",
+        description: "Croissant waffle dengan topping gula halus dan maple syrup",
+        tag: "Best Seller",
+        is_available: true
+    },
+    
+    // MENU REGULER
+    {
+        id: 6,
+        name: "Americano",
+        category: "Coffee",
+        price: 20000,
+        image_path: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=1287&auto=format&fit=crop",
+        description: "Espresso dengan air panas, coffee klasik yang nikmat",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 7,
+        name: "Cappuccino",
+        category: "Coffee",
+        price: 25000,
+        image_path: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=1287&auto=format&fit=crop",
+        description: "Espresso dengan steamed milk dan foam yang sempurna",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 8,
+        name: "Latte",
+        category: "Coffee",
+        price: 28000,
+        image_path: "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=2537&auto=format&fit=crop",
+        description: "Espresso dengan lebih banyak steamed milk, creamy dan smooth",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 9,
+        name: "Chocolate Latte",
+        category: "Non Coffee",
+        price: 30000,
+        image_path: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?q=80&w=1287&auto=format&fit=crop",
+        description: "Cokelat hangat dengan susu yang creamy dan whipped cream",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 10,
+        name: "Thai Tea",
+        category: "Non Coffee",
+        price: 22000,
+        image_path: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=1470&auto=format&fit=crop",
+        description: "Thai tea autentik dengan susu kental manis",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 11,
+        name: "Ayam Geprek Sambal Matah",
+        category: "Makanan Utama",
+        price: 35000,
+        image_path: "https://images.unsplash.com/photo-1562967914-608f82629710?q=80&w=1473&auto=format&fit=crop",
+        description: "Ayam crispy dengan sambal matah pedas dan nasi hangat",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 12,
+        name: "Mie Ayam Pangsit",
+        category: "Makanan Utama",
+        price: 25000,
+        image_path: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=1480&auto=format&fit=crop",
+        description: "Mie ayam dengan pangsit rebus dan pangsit goreng",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 13,
+        name: "French Fries",
+        category: "Snack",
+        price: 18000,
+        image_path: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=1469&auto=format&fit=crop",
+        description: "Kentang goreng crispy dengan saus samping",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 14,
+        name: "Chicken Wings",
+        category: "Snack",
+        price: 30000,
+        image_path: "https://images.unsplash.com/photo-1527477396560-dc2793bf9882?q=80&w=1253&auto=format&fit=crop",
+        description: "Sayap ayam dengan bumbu spesial dan saus BBQ",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 15,
+        name: "Tiramisu Cake",
+        category: "Dessert",
+        price: 28000,
+        image_path: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?q=80&w=1287&auto=format&fit=crop",
+        description: "Kue tiramisu dengan lapisan krim mascarpone dan kopi",
+        tag: "Regular",
+        is_available: true
+    },
+    {
+        id: 16,
+        name: "Cheesecake Blueberry",
+        category: "Dessert",
+        price: 32000,
+        image_path: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=1470&auto=format&fit=crop",
+        description: "Cheesecake lembut dengan topping blueberry segar",
+        tag: "Regular",
+        is_available: true
+    }
+];
+
+export default menuData;
