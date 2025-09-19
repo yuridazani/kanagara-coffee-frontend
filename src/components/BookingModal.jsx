@@ -1,8 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Send, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import ReCAPTCHA from "react-google-recaptcha";
 
 const BookingModal = ({ isOpen, onClose }) => {
     const { t } = useTranslation();
@@ -12,7 +11,6 @@ const BookingModal = ({ isOpen, onClose }) => {
         name: '', whatsapp: '', date: '', time: '', people: 1, eventDetails: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const recaptchaRef = useRef();
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
@@ -21,12 +19,7 @@ const BookingModal = ({ isOpen, onClose }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const recaptchaToken = recaptchaRef.current.getValue();
-        if (!recaptchaToken) {
-            toast.error("Mohon selesaikan verifikasi reCAPTCHA.");
-            return;
-        }
-
+        
         setIsSubmitting(true);
         toast.loading(t('Mengirim reservasi...'));
 
@@ -37,7 +30,6 @@ const BookingModal = ({ isOpen, onClose }) => {
             setIsSubmitted(true);
             setIsSubmitting(false);
             toast.success(t('Reservasi Anda berhasil terkirim!'));
-            recaptchaRef.current.reset();
         }, 1500);
     };
 
@@ -68,31 +60,78 @@ const BookingModal = ({ isOpen, onClose }) => {
                         <>
                             <h2 className="font-serif font-bold text-3xl text-charcoal mb-6">{t('Buat Reservasi')}</h2>
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                {/* Form fields remain the same */}
                                 <div>
                                     <label htmlFor="name" className="font-semibold text-charcoal/80">{t('Nama Lengkap')}</label>
-                                    <input type="text" id="name" value={formData.name} onChange={handleInputChange} required className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown" />
+                                    <input 
+                                        type="text" 
+                                        id="name" 
+                                        value={formData.name} 
+                                        onChange={handleInputChange} 
+                                        required 
+                                        className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown" 
+                                    />
                                 </div>
                                 <div>
                                     <label htmlFor="whatsapp" className="font-semibold text-charcoal/80">{t('Nomor WhatsApp (Aktif)')}</label>
-                                    <input type="tel" id="whatsapp" value={formData.whatsapp} onChange={handleInputChange} required placeholder="Contoh: 081234567890" className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown" />
+                                    <input 
+                                        type="tel" 
+                                        id="whatsapp" 
+                                        value={formData.whatsapp} 
+                                        onChange={handleInputChange} 
+                                        required 
+                                        placeholder="Contoh: 081234567890" 
+                                        className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown" 
+                                    />
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label htmlFor="date" className="font-semibold text-charcoal/80">{t('Tanggal')}</label>
-                                        <input type="date" id="date" value={formData.date} onChange={handleInputChange} required className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown" />
+                                        <input 
+                                            type="date" 
+                                            id="date" 
+                                            value={formData.date} 
+                                            onChange={handleInputChange} 
+                                            required 
+                                            className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown" 
+                                        />
                                     </div>
                                     <div>
                                         <label htmlFor="time" className="font-semibold text-charcoal/80">{t('Jam')}</label>
-                                        <input type="time" id="time" value={formData.time} onChange={handleInputChange} required className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown" />
+                                        <input 
+                                            type="time" 
+                                            id="time" 
+                                            value={formData.time} 
+                                            onChange={handleInputChange} 
+                                            required 
+                                            className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown" 
+                                        />
                                     </div>
                                 </div>
-                                <div className="pt-4 border-t">
-                                    <ReCAPTCHA
-                                        ref={recaptchaRef}
-                                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                                <div>
+                                    <label htmlFor="people" className="font-semibold text-charcoal/80">{t('Jumlah Orang')}</label>
+                                    <select 
+                                        id="people" 
+                                        value={formData.people} 
+                                        onChange={handleInputChange} 
+                                        className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown"
+                                    >
+                                        {[...Array(20)].map((_, i) => (
+                                            <option key={i + 1} value={i + 1}>{i + 1} {i === 0 ? 'orang' : 'orang'}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="eventDetails" className="font-semibold text-charcoal/80">{t('Detail Acara (Opsional)')}</label>
+                                    <textarea 
+                                        id="eventDetails" 
+                                        value={formData.eventDetails} 
+                                        onChange={handleInputChange} 
+                                        placeholder="Ceritakan acara atau kebutuhan khusus Anda..." 
+                                        rows="3" 
+                                        className="w-full p-2 border-b-2 border-cream bg-transparent focus:outline-none focus:border-wood-brown resize-none" 
                                     />
                                 </div>
+                                
                                 <p className="text-xs text-charcoal/70 pt-4 border-t">{t('*Tim kami akan menghubungi Anda melalui WhatsApp untuk konfirmasi ketersediaan dan detail lebih lanjut.')}</p>
                                 <button
                                     type="submit"
