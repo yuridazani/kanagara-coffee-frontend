@@ -329,7 +329,7 @@ const KelolaReservasiPage = () => {
             ? `Acara: ${reservation.eventDetails}` 
             : `Area: ${reservation.area || 'indoor'}`;
 
-        const message = `Halo ${reservation.name} 😊\nReservasi Anda telah dikonfirmasi:\n\n- Tanggal: ${reservation.date}\n- Jam: ${reservation.time}\n- Jumlah orang: ${reservation.people}\n- ${eventOrArea}\n- Nomor Reservasi: ${reservation.reservationNumber}\n\nSilakan lakukan DP sebesar Rp 100.000 ke rekening berikut:\n- BCA: 0183881822 a.n. Angga Januar Dobonsolo\n- Mandiri: 1410018607895 a.n. Angga Januar Dobonsolo\n\nSetelah transfer, mohon **upload bukti DP di website**. Terima kasih!`;
+        const message = `Halo ${reservation.name} 😊\nReservasi Anda telah dikonfirmasi:\n\n- Tanggal: ${reservation.date}\n- Jam: ${reservation.time}\n- Jumlah orang: ${reservation.people}\n- ${eventOrArea}\n- Nomor Reservasi: ${reservation.reservationNumber}\n\nSilakan lakukan DP sebesar Rp 100.000 ke rekening berikut:\n- BCA: 00000000 a.n. admin \n- Mandiri: 1112122211122 a.n. Admin\n\nSetelah transfer, mohon **upload bukti DP di website**. Terima kasih!`;
         sendWhatsApp(reservation, message);
     };
 
@@ -558,3 +558,4 @@ const KelolaReservasiPage = () => {
 };
 
 export default KelolaReservasiPage;
+
