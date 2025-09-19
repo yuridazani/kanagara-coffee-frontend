@@ -1,8 +1,11 @@
+// src/components/BestSellerSection.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { TrendingUp, ChevronRight, Eye } from 'lucide-react';
-import axiosClient from '../api/axiosClient';
+// import axiosClient from '../api/axiosClient'; ❌ tidak dipakai lagi
+import { menuData } from '../data/menuData'; // ✅ data statis
 
 const BestSellerSection = () => {
     const { t } = useTranslation();
@@ -10,22 +13,12 @@ const BestSellerSection = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchBestSellers = async () => {
-            try {
-                const response = await axiosClient.get('/menus');
-                const filtered = response.data.data
-                    .filter(item => item.tag === "Best Seller")
-                    .slice(0, 4);
-                setBestSellers(filtered);
-            } catch (error) {
-                console.error("Gagal memuat menu best seller:", error);
-                // Set empty array to show fallback UI
-                setBestSellers([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBestSellers();
+        // Ganti dengan logika data statis
+        const dummyBestSellers = menuData
+            .filter(item => item.tag === "Best Seller") // tetap filter by tag
+            .slice(0, 4); // ambil 4 teratas
+        setBestSellers(dummyBestSellers);
+        setLoading(false);
     }, []);
 
     const formatPrice = (price) => {
@@ -40,7 +33,7 @@ const BestSellerSection = () => {
         <div className="bg-cream rounded-lg border border-wood-brown/10 hover:shadow-md transition-all duration-200 hover:-translate-y-1 group">
             <div className="relative">
                 <img
-                    src={`http://localhost:8000/storage/${item.image_path}`}
+                    src={item.image_path}
                     alt={item.name}
                     className="w-full h-32 object-cover rounded-t-lg"
                     onError={(e) => {
@@ -71,7 +64,7 @@ const BestSellerSection = () => {
         <div className="bg-cream rounded-lg border border-wood-brown/10 hover:shadow-md transition-all duration-200 flex overflow-hidden group">
             <div className="relative w-20 h-20 flex-shrink-0">
                 <img
-                    src={`http://localhost:8000/storage/${item.image_path}`}
+                    src={item.image_path}
                     alt={item.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -147,7 +140,7 @@ const BestSellerSection = () => {
                     <div className="text-center py-8 bg-cream/50 rounded-lg border border-wood-brown/10" data-aos="fade-up">
                         <TrendingUp size={32} className="text-charcoal/30 mx-auto mb-2" />
                         <p className="text-sm text-charcoal/70">{t('Menu best seller belum diatur')}</p>
-                        <p className="text-xs text-charcoal/50">{t('Atur label "Best Seller" di halaman Kelola Menu')}</p>
+                        <p className="text-xs text-charcoal/50">{t('Atur label "Best Seller" di data statis menuData.js')}</p>
                     </div>
                 )}
             </div>
