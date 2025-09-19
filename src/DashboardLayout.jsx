@@ -1,7 +1,7 @@
 // src/DashboardLayout.jsx
 
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i-next';
+import { useTranslation } from 'react-i18next'; // FIXED: was 'react-i-next'
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import { LayoutDashboard, Coffee, Calendar, MessageSquare, LogOut, ChevronLeft, Bell, Search, UserCircle, Settings, Cog } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
