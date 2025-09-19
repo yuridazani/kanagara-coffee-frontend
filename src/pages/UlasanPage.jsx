@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { FeedbackCard } from '../components/FeedbackCard';
 import { Star, Filter } from 'lucide-react';
-import axiosClient from '../api/axiosClient';
+import { dummyFeedback } from '../data/adminData'; // ✅ pakai dummy
 import toast from 'react-hot-toast';
 
 const UlasanPage = () => {
@@ -18,19 +18,15 @@ const UlasanPage = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        const fetchFeedback = async () => {
-            try {
-                const response = await axiosClient.get('/feedback');
-                console.log('Feedback data:', response.data.data);
-                setAllFeedback(response.data.data);
-            } catch (error) {
-                console.error("Error fetching feedback:", error);
-                toast.error(t('Gagal memuat ulasan dari server.'));
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchFeedback();
+        try {
+            // ✅ langsung load dari dummy
+            setAllFeedback(dummyFeedback);
+        } catch (error) {
+            console.error("Error loading dummy feedback:", error);
+            toast.error(t('Gagal memuat ulasan.'));
+        } finally {
+            setLoading(false);
+        }
     }, [t]);
 
     // Membuat daftar menu unik dari semua ulasan
@@ -43,16 +39,13 @@ const UlasanPage = () => {
                 if (menuName) menuSet.add(menuName);
             });
         });
-        const menuArray = Array.from(menuSet).sort();
-        console.log('Unique menus found:', menuArray);
-        return menuArray;
+        return Array.from(menuSet).sort();
     }, [allFeedback]);
 
-    // Logika filter dan sortir
+    // Filter + sort
     const filteredAndSortedReviews = useMemo(() => {
         let reviews = [...allFeedback];
         
-        // Filter berdasarkan rating
         if (filterRating > 0) {
             reviews = reviews.filter(fb => {
                 const rating = fb.cafeRating || fb.cafe_rating;
@@ -60,19 +53,13 @@ const UlasanPage = () => {
             });
         }
         
-        // Filter berdasarkan menu
         if (filterMenu !== 'all') {
             reviews = reviews.filter(fb => {
                 const menu_ratings = fb.menu_ratings || [];
-                const hasMenu = menu_ratings.some(mr => {
-                    return mr.menuName === filterMenu;
-                });
-                console.log(`Checking feedback ${fb.id} for menu "${filterMenu}":`, hasMenu, menu_ratings);
-                return hasMenu;
+                return menu_ratings.some(mr => mr.menuName === filterMenu);
             });
         }
         
-        // Sortir hasil
         reviews.sort((a, b) => {
             const aRating = a.cafeRating || a.cafe_rating;
             const bRating = b.cafeRating || b.cafe_rating;
@@ -87,31 +74,21 @@ const UlasanPage = () => {
         return reviews;
     }, [allFeedback, sortOption, filterRating, filterMenu]);
 
-    // Hitung rating rata-rata
+    // Rata-rata rating
     const averageRating = useMemo(() => {
         if (allFeedback.length === 0) return 0;
-        
-        const validFeedbacks = allFeedback.filter(f => {
-            const rating = f.cafeRating || f.cafe_rating;
-            return rating > 0;
-        });
-        
+        const validFeedbacks = allFeedback.filter(f => (f.cafeRating || f.cafe_rating) > 0);
         if (validFeedbacks.length === 0) return 0;
-        
-        const totalRating = validFeedbacks.reduce((acc, curr) => {
-            const rating = curr.cafeRating || curr.cafe_rating;
-            return acc + rating;
-        }, 0);
-        
+        const totalRating = validFeedbacks.reduce((acc, curr) => acc + (curr.cafeRating || curr.cafe_rating), 0);
         return (totalRating / validFeedbacks.length).toFixed(1);
     }, [allFeedback]);
 
-    // Hitung distribusi rating untuk statistik
+    // Distribusi rating
     const ratingDistribution = useMemo(() => {
         const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
         allFeedback.forEach(fb => {
             const rating = fb.cafeRating || fb.cafe_rating;
-            if (rating && rating >= 1 && rating <= 5) {
+            if (rating >= 1 && rating <= 5) {
                 distribution[rating]++;
             }
         });
@@ -145,16 +122,12 @@ const UlasanPage = () => {
                                             <Star size={20} className="text-yellow-400" fill="currentColor" />
                                             <span className="text-xl font-bold">{averageRating}</span>
                                             <span className="text-white/80 text-sm">
-                                                {t('/ 5.0 dari')} {allFeedback.filter(f => {
-                                                    const rating = f.cafeRating || f.cafe_rating;
-                                                    return rating > 0;
-                                                }).length} {t('ulasan')}
+                                                {t('/ 5.0 dari')} {allFeedback.filter(f => (f.cafeRating || f.cafe_rating) > 0).length} {t('ulasan')}
                                             </span>
                                         </div>
                                     )}
                                 </div>
-                                
-                                {/* Mini Rating Distribution */}
+                                {/* Distribusi Rating */}
                                 {averageRating > 0 && (
                                     <div className="hidden md:block bg-white/10 rounded-lg p-4 backdrop-blur-sm">
                                         <h3 className="text-sm font-semibold mb-2">{t('Distribusi Rating')}</h3>
@@ -180,7 +153,7 @@ const UlasanPage = () => {
                             </div>
                         </div>
                         
-                        {/* Panel Filter Compact */}
+                        {/* Panel Filter */}
                         <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6 shadow-sm sticky top-20 z-40">
                             <div className="flex items-center gap-2 mb-3">
                                 <Filter size={16} className="text-gray-600" />
@@ -207,7 +180,6 @@ const UlasanPage = () => {
                                         <option value="lowest">{t('⭐ Rating Terendah')}</option>
                                     </select>
                                 </div>
-                                
                                 <div>
                                     <select 
                                         value={filterRating} 
@@ -222,14 +194,10 @@ const UlasanPage = () => {
                                         <option value={1}>{t('⭐☆☆☆☆ (1 bintang)')}</option>
                                     </select>
                                 </div>
-                                
                                 <div>
                                     <select 
                                         value={filterMenu} 
-                                        onChange={e => {
-                                            console.log('Menu filter changed to:', e.target.value);
-                                            setFilterMenu(e.target.value);
-                                        }} 
+                                        onChange={e => setFilterMenu(e.target.value)} 
                                         className="w-full p-2 text-sm border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-wood-brown/20"
                                     >
                                         <option value="all">{t('🍽️ Semua Menu')}</option>
@@ -241,7 +209,7 @@ const UlasanPage = () => {
                             </div>
                         </div>
 
-                        {/* Daftar Ulasan - Grid yang lebih efisien */}
+                        {/* Daftar Ulasan */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                             {filteredAndSortedReviews.length > 0 ? (
                                 filteredAndSortedReviews.map(fb => (
@@ -268,7 +236,7 @@ const UlasanPage = () => {
                             )}
                         </div>
 
-                        {/* Quick Stats Footer */}
+                        {/* Footer Stats */}
                         {allFeedback.length > 0 && (
                             <div className="mt-8 p-4 bg-gray-50 rounded-lg">
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
