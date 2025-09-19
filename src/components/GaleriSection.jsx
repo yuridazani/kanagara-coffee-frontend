@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Instagram, X } from 'lucide-react';
-import { useWebsite } from '../context/WebsiteContext'; // Changed from useWebsiteContent to useWebsite
+import { useWebsite } from '../context/WebsiteContext';
 
 const GaleriSection = () => {
     const { t } = useTranslation();
-    const { gallery, loading } = useWebsite(); // Changed from useWebsiteContent to useWebsite
+    const { gallery, loading } = useWebsite();
     const [selectedImage, setSelectedImage] = useState(null);
 
     // Default gallery images jika belum ada data dari backend
@@ -44,18 +44,11 @@ const GaleriSection = () => {
         }
     ];
 
-    // FIX: Safe API URL access
-    const getApiUrl = () => {
-        if (typeof process !== 'undefined' && process.env?.REACT_APP_API_URL) {
-            return process.env.REACT_APP_API_URL;
-        }
-        return 'http://localhost:8000';
-    };
-
-    // Gunakan gallery dari context jika tersedia, fallback ke default
+    // Use gallery data if available, otherwise use default images
+    // For production, always use the image_path directly from dummy data
     const galleryImages = !loading && gallery?.length > 0
         ? gallery.map(img => ({
-            src: `${getApiUrl()}/storage/${img.path}`,
+            src: img.image_path, // Use image_path directly (contains full Unsplash URL)
             alt: img.alt_text || 'Galeri Kanagara Coffee',
         }))
         : defaultGalleryImages;
