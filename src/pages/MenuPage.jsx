@@ -247,20 +247,6 @@ const MenuPage = () => {
                             </div>
                         </div>
 
-                        {/* Results Counter & Debug Info */}
-                        <div className="mb-6">
-                            <p className="text-sm text-gray-600">
-                                {t('Menampilkan')} <strong>{filteredMenu.length}</strong> {t('menu')}
-                                {activeCategory !== "All" && ` dalam kategori "${activeCategory}"`}
-                                {activeTag !== "All" && ` dengan label "${activeTag}"`}
-                            </p>
-                            <div className="text-xs text-gray-500 mt-1">
-                                Total data: {menus.length} | 
-                                Best Sellers: {menus.filter(item => item.tag === 'Best Seller').length} | 
-                                Regular: {menus.filter(item => item.tag === 'Regular').length}
-                            </div>
-                        </div>
-
                         {/* Menu Grid/List */}
                         <div className={viewMode === 'grid'
                             ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
@@ -273,11 +259,6 @@ const MenuPage = () => {
                                 <div className="col-span-full text-center py-12 text-gray-500">
                                     <p className="text-lg">{t('Tidak ada menu yang ditemukan')}</p>
                                     <p className="text-sm">{t('Coba ubah filter kategori atau label')}</p>
-                                    <div className="mt-4 text-xs text-gray-400">
-                                        <p>Active Category: {activeCategory}</p>
-                                        <p>Active Tag: {activeTag}</p>
-                                        <p>Total Menu Items: {menus.length}</p>
-                                    </div>
                                 </div>
                             )}
                         </div>
@@ -291,3 +272,4 @@ const MenuPage = () => {
 };
 
 export default MenuPage;
+
