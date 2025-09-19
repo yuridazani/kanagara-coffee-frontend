@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Instagram, X } from 'lucide-react';
-import { useWebsiteContent } from '../context/WebsiteContext';
+import { useWebsite } from '../context/WebsiteContext'; // Changed from useWebsiteContent to useWebsite
 
 const GaleriSection = () => {
     const { t } = useTranslation();
-    const { gallery, loading } = useWebsiteContent();
+    const { gallery, loading } = useWebsite(); // Changed from useWebsiteContent to useWebsite
     const [selectedImage, setSelectedImage] = useState(null);
 
     // Default gallery images jika belum ada data dari backend
