@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { useWebsiteContent } from '../context/WebsiteContext';
+import { useWebsite } from '../context/WebsiteContext'; // Changed from useWebsiteContent to useWebsite
 
 const defaultImages = [
     'https://images.unsplash.com/photo-1559305417-7d08c547c4c3?q=80&w=2574&auto=format&fit=crop',
@@ -12,7 +12,7 @@ const defaultImages = [
 
 const HeroSection = () => {
     const { t } = useTranslation();
-    const { settings, hero_images, criticalLoading } = useWebsiteContent(); // Gunakan criticalLoading
+    const { settings, hero_images, criticalLoading } = useWebsite(); // Changed from useWebsiteContent to useWebsite
     const [currentIndex, setCurrentIndex] = useState(0);
 
     // Memoize tagline untuk avoid re-render
@@ -102,6 +102,5 @@ const HeroSection = () => {
         </section>
     );
 };
-
 
 export default HeroSection;
