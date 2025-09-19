@@ -2,7 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Wifi, PlugZap, Wind, ParkingCircle, Users, Church, Coffee, Utensils, Shield } from 'lucide-react';
-import { useWebsiteContent } from '../context/WebsiteContext';
+import { useWebsite } from '../context/WebsiteContext'; // Changed from useWebsiteContent to useWebsite
 
 // Mapping icon berdasarkan nama fasilitas
 const getIconByName = (name) => {
@@ -39,7 +39,7 @@ const getIconByName = (name) => {
 const FasilitasSection = () => {
     // Panggil hook di sini, SATU KALI saja di level teratas
     const { t } = useTranslation();
-    const { facilities, loading } = useWebsiteContent();
+    const { facilities, loading } = useWebsite(); // Changed from useWebsiteContent to useWebsite
 
     // Default facilities jika belum ada data dari backend
     const defaultFacilities = [
