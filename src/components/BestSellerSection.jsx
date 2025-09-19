@@ -13,10 +13,10 @@ const BestSellerSection = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Ganti dengan logika data statis
+        // Ambil data dummy best seller dari menuData.js
         const dummyBestSellers = menuData
-            .filter(item => item.tag === "Best Seller") // tetap filter by tag
-            .slice(0, 4); // ambil 4 teratas
+            .filter(item => item.tag === "Best Seller")
+            .slice(0, 4);
         setBestSellers(dummyBestSellers);
         setLoading(false);
     }, []);
