@@ -1,26 +1,15 @@
 // src/components/AboutSection.jsx
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWebsite } from '../context/WebsiteContext'; // Changed from useWebsiteContent to useWebsite
+import { useWebsite } from '../context/WebsiteContext';
 
 const AboutSection = () => {
     const { t } = useTranslation();
-    const { settings, loading } = useWebsite(); // Changed from useWebsiteContent to useWebsite
+    const { settings, loading } = useWebsite();
 
-    // Safe API URL function
-    const getApiUrl = useMemo(() => {
-        if (typeof process !== 'undefined' && process.env?.REACT_APP_API_URL) {
-            return process.env.REACT_APP_API_URL;
-        }
-        return 'http://localhost:8000';
-    }, []);
-
-    // Safe development logging
+    // Development check
     const isDevelopment = typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
-    if (isDevelopment && !loading) {
-        console.log('About section settings:', settings);
-    }
-
+    
     // Memoize computed values
     const aboutText = useMemo(() => 
         settings?.about_text || 
@@ -34,26 +23,18 @@ const AboutSection = () => {
         [settings?.gmaps_url]
     );
 
+    // Use static image instead of API path to avoid mixed content errors
     const aboutImage = useMemo(() => {
-        if (settings?.about_image_path) {
-            return `${getApiUrl}/storage/${settings.about_image_path}?t=${Date.now()}`;
-        }
         return "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=2537&auto=format&fit=crop";
-    }, [settings?.about_image_path, getApiUrl]);
+    }, []);
 
     // Handler untuk error gambar
     const handleImageError = (e) => {
         if (isDevelopment) {
             console.error('About image failed to load:', aboutImage);
         }
+        // Fallback to same image since we're using static URLs
         e.target.src = "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=2537&auto=format&fit=crop";
-    };
-
-    // Handler untuk load gambar berhasil
-    const handleImageLoad = () => {
-        if (isDevelopment) {
-            console.log('About image loaded:', aboutImage);
-        }
     };
 
     return (
@@ -64,11 +45,9 @@ const AboutSection = () => {
                         <div className="bg-gray-200 animate-pulse rounded-lg shadow-2xl w-full h-80"></div>
                     ) : (
                         <img 
-                            key={aboutImage}
                             src={aboutImage}
                             alt="Kanagara Coffee Interior" 
                             className="rounded-lg shadow-2xl w-full h-auto object-cover"
-                            onLoad={handleImageLoad}
                             onError={handleImageError}
                             loading="lazy"
                         />
@@ -99,7 +78,6 @@ const AboutSection = () => {
                     <div className="mt-8">
                         {gmapsUrl ? (
                             <iframe
-                                key={gmapsUrl}
                                 src={gmapsUrl} 
                                 width="100%"
                                 height="250"
