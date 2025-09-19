@@ -8,9 +8,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Ornament from '../components/Ornament';
 import { LayoutGrid, List } from 'lucide-react';
-import { menuData } from '../data/menuData'; // 🔑 Data menu statis
+import { menuData } from '../data/menuData';
 
-// Daftar tag yang bisa difilter oleh pelanggan
 const availableTags = ['Best Seller', 'Popular', 'Recommended', 'Must Try', 'New Menu'];
 
 // Komponen Kartu Menu
@@ -34,7 +33,7 @@ const MenuItemCard = ({ item, viewMode = 'grid' }) => {
 
     const getImageUrl = (imagePath) => {
         if (!imagePath || imageError) return null;
-        return imagePath; // 🔑 langsung pakai path dari menuData
+        return imagePath; 
     };
 
     const imageUrl = getImageUrl(item.image_path);
@@ -122,8 +121,6 @@ const MenuPage = () => {
     useEffect(() => {
         AOS.init({ duration: 600, once: true });
         window.scrollTo(0, 0);
-
-        // 🔑 langsung pakai menuData statis
         setMenus(menuData);
         setLoading(false);
     }, []);
@@ -238,3 +235,4 @@ const MenuPage = () => {
 };
 
 export default MenuPage;
+
