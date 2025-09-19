@@ -1,49 +1,34 @@
 // src/DashboardLayout.jsx
 
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i-next';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import { LayoutDashboard, Coffee, Calendar, MessageSquare, LogOut, ChevronLeft, Bell, Search, UserCircle, Settings, Cog } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from './context/AuthContext';
-import axiosClient from './api/axiosClient';
+// HAPUS: import axiosClient from './api/axiosClient';
+import { dummyNotifications } from './data/adminData'; // GANTI DENGAN INI
 
 // ==================== TopBar ====================
 const TopBar = () => {
-  // Panggil hook di sini, satu kali
   const { t } = useTranslation();
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState({ unread: [], read: [] });
+  // Langsung gunakan data dummy sebagai state awal
+  const [notifications, setNotifications] = useState(dummyNotifications);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
-  // Fungsi fetchNotifications sekarang berada di dalam useEffect atau dipanggil dari sana
-  const fetchNotifications = () => {
-    axiosClient.get('/notifications')
-      .then(({ data }) => {
-        setNotifications(data);
-      })
-      .catch(error => {
-        console.error('Error fetching notifications:', error);
-      });
-  };
-  
-  useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  // Hapus useEffect yang mengambil data dari API
+  // useEffect(() => { ... }, []);
 
   const handleMarkAsRead = (id) => {
-    axiosClient.post(`/notifications/${id}/read`).then(() => {
-      const notifToMove = notifications.unread.find(n => n.id === id);
-      if (notifToMove) {
-        setNotifications(prev => ({
-          unread: prev.unread.filter(n => n.id !== id),
-          read: [notifToMove, ...prev.read]
-        }));
-      }
-    }).catch(error => console.error('Error marking notification as read:', error));
+    const notifToMove = notifications.unread.find(n => n.id === id);
+    if (notifToMove) {
+      setNotifications(prev => ({
+        unread: prev.unread.filter(n => n.id !== id),
+        read: [notifToMove, ...prev.read]
+      }));
+    }
   };
 
   const handleLogout = () => {
@@ -162,7 +147,6 @@ const TopBar = () => {
 
 // ==================== Sidebar ====================
 const Sidebar = ({ isCollapsed, toggleSidebar }) => {
-  // Panggil hook di sini, satu kali
   const { t } = useTranslation();
 
   return (
