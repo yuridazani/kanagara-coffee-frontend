@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import axiosClient from '../api/axiosClient';
+// import axiosClient from '../api/axiosClient'; ❌ dihapus
 import { useAuth } from '../context/AuthContext';
 
 const SettingsPage = () => {
-    const { t } = useTranslation(); // Hook dipanggil sekali saja di level atas
+    const { t } = useTranslation();
     const { user } = useAuth();
 
     const [currentPassword, setCurrentPassword] = useState('');
@@ -16,31 +16,23 @@ const SettingsPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors({}); // Bersihkan error lama
-
+        setErrors({});
         const toastId = toast.loading("Menyimpan perubahan...");
 
-        try {
-            await axiosClient.post('/user/change-password', {
-                current_password: currentPassword,
-                new_password: newPassword,
-                new_password_confirmation: newPasswordConfirmation,
-            });
+        // Validasi sederhana
+        if (newPassword !== newPasswordConfirmation) {
+            setErrors({ new_password: ["Konfirmasi password tidak cocok."] });
+            toast.error("Konfirmasi password tidak cocok.", { id: toastId });
+            return;
+        }
 
-            toast.success("Password berhasil diubah!", { id: toastId });
-
-            // Reset form
+        // Simulasi pengiriman
+        setTimeout(() => {
+            toast.success("Password berhasil diubah (Simulasi)!", { id: toastId });
             setCurrentPassword('');
             setNewPassword('');
             setNewPasswordConfirmation('');
-        } catch (error) {
-            if (error.response && error.response.status === 422) {
-                setErrors(error.response.data.errors);
-                toast.error("Gagal menyimpan. Periksa kembali isian Anda.", { id: toastId });
-            } else {
-                toast.error("Terjadi kesalahan.", { id: toastId });
-            }
-        }
+        }, 1000);
     };
 
     return (
